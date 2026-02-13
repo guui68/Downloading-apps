@@ -7,20 +7,27 @@
     <style>
         :root { --primary: #01875f; --bg: #f8f9fa; --surface: #ffffff; }
         body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
         .header { background: var(--surface); padding: 10px 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
-        .search-box { max-width: 600px; margin: 10px auto; background: #f1f3f4; border-radius: 25px; padding: 8px 20px; display: flex; align-items: center; border: 1px solid transparent; }
+        .search-box { max-width: 600px; margin: 10px auto; background: #f1f3f4; border-radius: 25px; padding: 8px 20px; display: flex; align-items: center; }
         .search-box input { width: 100%; border: none; background: transparent; padding: 8px; font-size: 16px; outline: none; }
+        
         .nav-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 5px; }
         .tab { padding: 8px 25px; border-radius: 20px; border: none; font-weight: 600; cursor: pointer; background: #e8f0fe; color: #1967d2; font-size: 14px; }
         .tab.active { background: var(--primary); color: white; }
+
         .app-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding: 20px; max-width: 1000px; margin: auto; }
-        .app-card { background: var(--surface); border-radius: 18px; padding: 15px; text-align: center; border: 1px solid #eee; }
+        .app-card { background: var(--surface); border-radius: 18px; padding: 15px; text-align: center; border: 1px solid #eee; transition: 0.2s; }
+        .app-card:active { transform: scale(0.96); }
         .app-icon { width: 68px; height: 68px; border-radius: 16px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 26px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-transform: uppercase; }
         .app-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; height: 35px; overflow: hidden; }
-        .install-btn { background: var(--primary); color: white; border: none; padding: 10px 0; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold; }
+        
+        .install-btn { background: var(--primary); color: white; border: none; padding: 10px 0; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .install-btn:disabled { background: #ccc; cursor: not-allowed; }
     </style>
 </head>
 <body>
+
 <div class="header">
     <div class="search-box">
         <input type="text" id="searchInput" onkeyup="filterApps()" placeholder="অ্যাপস সার্চ করুন...">
@@ -30,12 +37,12 @@
         <button id="tab-file" class="tab" onclick="switchTab('file')">ফাইল</button>
     </div>
 </div>
+
 <div class="app-grid" id="mainContainer">লোডিং হচ্ছে...</div>
 
 <script>
     let items = [];
     let currentTab = 'app';
-    // গিটহাব এপিআই সরাসরি ব্যবহার করছি ক্যাশ এড়াতে
     const API_URL = 'https://api.github.com/repos/guui68/Downloading-apps/contents/data.json';
 
     async function fetchData() {
@@ -44,22 +51,46 @@
             const data = await res.json();
             items = JSON.parse(decodeURIComponent(escape(atob(data.content))));
             render();
-        } catch (e) { document.getElementById('mainContainer').innerText = "ডেটা লোড করতে ব্যর্থ!"; }
+        } catch (e) {
+            document.getElementById('mainContainer').innerText = "ডেটা লোড করতে ব্যর্থ!";
+        }
     }
 
     function render() {
         const container = document.getElementById('mainContainer');
         container.innerHTML = '';
         const filtered = items.filter(i => i.cat === currentTab);
-        if(filtered.length === 0) { container.innerHTML = "কিছু পাওয়া যায়নি"; return; }
+        
         filtered.forEach(item => {
             container.innerHTML += `
                 <div class="app-card">
                     <div class="app-icon" style="background: ${item.color || '#01875f'}">${item.title[0]}</div>
                     <div class="app-title">${item.title}</div>
-                    <button class="install-btn" onclick="location.href='${item.link}'">ইনস্টল</button>
+                    <button class="install-btn" onclick="forceDownload('${item.link}', this)">ইনস্টল</button>
                 </div>`;
         });
+    }
+
+    // মাস্টার ডাউনলোড ফাংশন (রিফ্রেশ ছাড়া বারবার ডাউনলোড হবে)
+    function forceDownload(url, btn) {
+        btn.innerText = "ডাউনলোড...";
+        btn.disabled = true;
+
+        // লিঙ্কের শেষে টাইমস্ট্যাম্প যোগ করা যাতে ব্রাউজার মনে করে এটি একদম নতুন ফাইল
+        const uniqueUrl = url + (url.includes('?') ? '&' : '?') + 'update=' + Date.now();
+        
+        const a = document.createElement('a');
+        a.href = uniqueUrl;
+        a.setAttribute('download', ''); // ফোর্স ডাউনলোড
+        document.body.appendChild(a);
+        a.click();
+        
+        // ৩ সেকেন্ড পর বাটন আগের অবস্থায় ফিরিয়ে আনা যাতে আবার ক্লিক করা যায়
+        setTimeout(() => {
+            document.body.removeChild(a);
+            btn.innerText = "ইনস্টল";
+            btn.disabled = false;
+        }, 3000);
     }
 
     function filterApps() {
@@ -76,6 +107,7 @@
         document.getElementById('tab-' + cat).classList.add('active');
         render();
     }
+
     fetchData();
 </script>
 </body>
