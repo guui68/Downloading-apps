@@ -12,11 +12,10 @@
         .header { 
             background: var(--surface); 
             padding: 15px 20px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
             position: sticky; 
             top: 0; 
             z-index: 1000; 
-            border-bottom: 1px solid #f0f0f0;
         }
 
         /* প্রিমিয়াম সার্চ বক্স */
@@ -28,30 +27,13 @@
             padding: 8px 22px; 
             display: flex; 
             align-items: center; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06); 
-            border: 1px solid #e0e0e0;
-            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08); 
+            border: 1px solid #eee;
         }
-        .search-box:focus-within {
-            border-color: var(--primary);
-            box-shadow: 0 4px 15px rgba(1, 135, 95, 0.15);
-        }
-        .search-box input { 
-            width: 100%; 
-            border: none; 
-            background: transparent; 
-            font-size: 16px; 
-            outline: none; 
-            color: #3c4043;
-            padding: 8px 0;
-        }
+        .search-box input { width: 100%; border: none; background: transparent; font-size: 16px; outline: none; padding: 8px 0; }
 
-        /* প্রিমিয়াম নেভিগেশন ট্যাব */
-        .nav-tabs { 
-            display: flex; 
-            justify-content: center; 
-            gap: 15px; 
-        }
+        /* নেভিগেশন ট্যাব */
+        .nav-tabs { display: flex; justify-content: center; gap: 15px; }
         .tab { 
             padding: 10px 35px; 
             border-radius: 25px; 
@@ -60,19 +42,13 @@
             cursor: pointer; 
             background: #ffffff; 
             color: #5f6368; 
-            font-size: 14px; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
-        .tab:hover {
-            background: #f1f3f4;
+            transition: 0.3s;
         }
         .tab.active { 
             background: var(--primary); 
             color: #ffffff; 
             border-color: var(--primary);
             box-shadow: 0 4px 12px rgba(1, 135, 95, 0.3);
-            transform: translateY(-1px);
         }
 
         /* অ্যাপ গ্রিড */
@@ -85,22 +61,19 @@
             margin: auto; 
         }
         
-        /* প্রিমিয়াম কার্ড শেডো */
+        /* অ্যাপ কার্ড - চারকানি দিয়ে কড়া শেডো */
         .app-card { 
             background: var(--surface); 
             border-radius: 24px; 
             padding: 22px 18px; 
             text-align: center; 
-            box-shadow: 0 8px 24px rgba(149, 157, 165, 0.1); 
-            border: 1px solid rgba(0,0,0,0.03);
-            transition: all 0.3s ease;
-        }
-        .app-card:hover { 
-            transform: translateY(-8px); 
-            box-shadow: 0 12px 35px rgba(0,0,0,0.1); 
+            /* এখানে আমি শেডো আরও বাড়িয়ে দিয়েছি */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06); 
+            border: 1px solid rgba(0,0,0,0.02);
+            transition: 0.3s ease;
         }
 
-        /* আইকন ডিজাইন */
+        /* লোগো আইকন - ফিক্সড */
         .app-icon { 
             width: 80px; 
             height: 80px; 
@@ -110,20 +83,13 @@
             align-items: center; 
             justify-content: center; 
             color: white; 
-            font-size: 34px; 
+            font-size: 36px; 
             font-weight: bold; 
-            box-shadow: 0 6px 15px rgba(0,0,0,0.12);
+            text-transform: uppercase;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
         }
         
-        .app-title { 
-            font-size: 15px; 
-            font-weight: 600; 
-            color: #202124; 
-            margin-bottom: 18px; 
-            height: 40px; 
-            overflow: hidden; 
-            line-height: 1.3;
-        }
+        .app-title { font-size: 15px; font-weight: 700; color: #202124; margin-bottom: 18px; height: 40px; display: block; }
         
         .install-btn { 
             background: var(--primary); 
@@ -133,12 +99,9 @@
             border-radius: 14px; 
             width: 100%; 
             cursor: pointer; 
-            font-weight: 700; 
-            font-size: 14px;
-            box-shadow: 0 2px 6px rgba(1, 135, 95, 0.2);
-            transition: 0.2s;
+            font-weight: bold; 
+            box-shadow: 0 3px 8px rgba(1, 135, 95, 0.2);
         }
-        .install-btn:active { transform: scale(0.94); background: #016d4d; }
     </style>
 </head>
 <body>
@@ -148,8 +111,8 @@
         <input type="text" id="searchInput" onkeyup="filterApps()" placeholder="অ্যাপ বা ফাইল খুঁজুন...">
     </div>
     <div class="nav-tabs">
-        <button id="tab-app" class="tab active" onclick="switchTab('app')">অ্যাপস</button>
-        <button id="tab-file" class="tab" onclick="switchTab('file')">ফাইল</button>
+        <button id="tab-app" class="tab active" onclick="switchTab('app')">Apps</button>
+        <button id="tab-file" class="tab" onclick="switchTab('file')">File</button>
     </div>
 </div>
 
@@ -175,14 +138,17 @@
         const filtered = items.filter(i => i.cat === currentTab);
         
         filtered.forEach(item => {
-            const firstLetter = item.title ? item.title.trim().charAt(0).toUpperCase() : '?';
+            // নামের অক্ষর লোগো ফিক্স: যদি 'title' না পায় তবে 'name' চেক করবে
+            let displayName = item.title || item.name || "App";
+            let firstLetter = displayName.trim().charAt(0).toUpperCase();
+
             container.innerHTML += `
                 <div class="app-card">
                     <div class="app-icon" style="background: ${item.color || '#01875f'}">
                         ${firstLetter}
                     </div>
-                    <div class="app-title">${item.title}</div>
-                    <button class="install-btn" onclick="downloadFix('${item.link}')">ইনস্টল</button>
+                    <div class="app-title">${displayName}</div>
+                    <button class="install-btn" onclick="downloadFix('${item.link}')">Install</button>
                 </div>`;
         });
     }
