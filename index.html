@@ -5,69 +5,147 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GX Tech Store</title>
     <style>
-        :root { --primary: #01875f; --bg: #f1f3f4; --surface: #ffffff; }
+        :root { --primary: #01875f; --bg: #f8f9fa; --surface: #ffffff; }
         body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); margin: 0; padding: 0; user-select: none; }
         
-        /* হেডার ও সার্চ বার */
-        .header { background: var(--surface); padding: 10px 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
-        .search-box { max-width: 600px; margin: 10px auto; background: #f1f3f4; border-radius: 25px; padding: 8px 20px; display: flex; align-items: center; border: 1px solid transparent; }
-        .search-box input { width: 100%; border: none; background: transparent; padding: 8px; font-size: 16px; outline: none; }
-        
-        .nav-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 5px; }
-        .tab { padding: 8px 25px; border-radius: 20px; border: none; font-weight: 600; cursor: pointer; background: #e8f0fe; color: #1967d2; font-size: 14px; }
-        .tab.active { background: var(--primary); color: white; }
+        /* প্রিমিয়াম হেডার */
+        .header { 
+            background: var(--surface); 
+            padding: 15px 20px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03); 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+            border-bottom: 1px solid #f0f0f0;
+        }
 
-        /* অ্যাপ গ্রিড ও কার্ড ডিজাইন */
-        .app-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 20px; padding: 20px; max-width: 1000px; margin: auto; }
+        /* প্রিমিয়াম সার্চ বক্স */
+        .search-box { 
+            max-width: 550px; 
+            margin: 0 auto 20px; 
+            background: #ffffff; 
+            border-radius: 28px; 
+            padding: 8px 22px; 
+            display: flex; 
+            align-items: center; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06); 
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        .search-box:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(1, 135, 95, 0.15);
+        }
+        .search-box input { 
+            width: 100%; 
+            border: none; 
+            background: transparent; 
+            font-size: 16px; 
+            outline: none; 
+            color: #3c4043;
+            padding: 8px 0;
+        }
+
+        /* প্রিমিয়াম নেভিগেশন ট্যাব */
+        .nav-tabs { 
+            display: flex; 
+            justify-content: center; 
+            gap: 15px; 
+        }
+        .tab { 
+            padding: 10px 35px; 
+            border-radius: 25px; 
+            border: 1px solid #e0e0e0;
+            font-weight: 600; 
+            cursor: pointer; 
+            background: #ffffff; 
+            color: #5f6368; 
+            font-size: 14px; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .tab:hover {
+            background: #f1f3f4;
+        }
+        .tab.active { 
+            background: var(--primary); 
+            color: #ffffff; 
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(1, 135, 95, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* অ্যাপ গ্রিড */
+        .app-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+            gap: 25px; 
+            padding: 25px; 
+            max-width: 1100px; 
+            margin: auto; 
+        }
         
+        /* প্রিমিয়াম কার্ড শেডো */
         .app-card { 
             background: var(--surface); 
-            border-radius: 20px; 
-            padding: 20px 15px; 
+            border-radius: 24px; 
+            padding: 22px 18px; 
             text-align: center; 
-            /* চারপাশ দিয়ে সুন্দর শেডো */
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
-            transition: transform 0.2s, box-shadow 0.2s;
-            border: 1px solid #f0f0f0;
+            box-shadow: 0 8px 24px rgba(149, 157, 165, 0.1); 
+            border: 1px solid rgba(0,0,0,0.03);
+            transition: all 0.3s ease;
         }
-        .app-card:active { transform: scale(0.95); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .app-card:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 12px 35px rgba(0,0,0,0.1); 
+        }
 
-        /* নামের প্রথম অক্ষরের লোগো */
+        /* আইকন ডিজাইন */
         .app-icon { 
-            width: 70px; 
-            height: 70px; 
-            border-radius: 18px; 
-            margin: 0 auto 15px; 
+            width: 80px; 
+            height: 80px; 
+            border-radius: 22px; 
+            margin: 0 auto 18px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             color: white; 
-            font-size: 30px; 
+            font-size: 34px; 
             font-weight: bold; 
-            text-transform: uppercase;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.12);
         }
         
-        .app-title { font-size: 14px; font-weight: 600; margin-bottom: 15px; color: #202124; height: 35px; overflow: hidden; }
+        .app-title { 
+            font-size: 15px; 
+            font-weight: 600; 
+            color: #202124; 
+            margin-bottom: 18px; 
+            height: 40px; 
+            overflow: hidden; 
+            line-height: 1.3;
+        }
         
         .install-btn { 
             background: var(--primary); 
             color: white; 
             border: none; 
-            padding: 10px 0; 
-            border-radius: 10px; 
+            padding: 12px 0; 
+            border-radius: 14px; 
             width: 100%; 
             cursor: pointer; 
-            font-weight: bold; 
-            font-size: 13px;
+            font-weight: 700; 
+            font-size: 14px;
+            box-shadow: 0 2px 6px rgba(1, 135, 95, 0.2);
+            transition: 0.2s;
         }
+        .install-btn:active { transform: scale(0.94); background: #016d4d; }
     </style>
 </head>
 <body>
 
 <div class="header">
     <div class="search-box">
-        <input type="text" id="searchInput" onkeyup="filterApps()" placeholder="সার্চ করুন...">
+        <input type="text" id="searchInput" onkeyup="filterApps()" placeholder="অ্যাপ বা ফাইল খুঁজুন...">
     </div>
     <div class="nav-tabs">
         <button id="tab-app" class="tab active" onclick="switchTab('app')">অ্যাপস</button>
@@ -84,12 +162,11 @@
 
     async function fetchData() {
         try {
-            const res = await fetch(API_URL, { cache: "no-store" });
+            const res = await fetch(API_URL + '?v=' + Date.now(), { cache: "no-store" });
             const data = await res.json();
-            // ডাটা ডিকোড করা
             items = JSON.parse(decodeURIComponent(escape(atob(data.content))));
             render();
-        } catch (e) { document.getElementById('mainContainer').innerText = "ডেটা লোড ব্যর্থ!"; }
+        } catch (e) { document.getElementById('mainContainer').innerText = "নেটওয়ার্ক সমস্যা!"; }
     }
 
     function render() {
@@ -98,9 +175,7 @@
         const filtered = items.filter(i => i.cat === currentTab);
         
         filtered.forEach(item => {
-            // নামের প্রথম অক্ষর বের করা
-            const firstLetter = item.title ? item.title.charAt(0) : '?';
-            
+            const firstLetter = item.title ? item.title.trim().charAt(0).toUpperCase() : '?';
             container.innerHTML += `
                 <div class="app-card">
                     <div class="app-icon" style="background: ${item.color || '#01875f'}">
@@ -117,7 +192,6 @@
         const link = document.createElement('a');
         link.href = freshUrl;
         link.target = '_blank';
-        link.download = ''; 
         document.body.appendChild(link);
         link.click();
         setTimeout(() => { document.body.removeChild(link); }, 200);
