@@ -2,110 +2,91 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>GX Tech Admin Pro</title>
+    <title>GX Admin Pro</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 20px; }
-        .admin-box { max-width: 500px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-        h2 { color: #01875f; text-align: center; margin-bottom: 25px; }
-        input, select, button { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
-        button { background: #01875f; color: white; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #016d4d; }
-        .update-mode { background: #2196f3; }
-        
-        .item-list { margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px; }
-        .item-card { background: #fff; border: 1px solid #eee; padding: 12px; margin-bottom: 10px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .item-info b { display: block; font-size: 14px; }
-        .item-info span { font-size: 12px; color: #888; }
-        .btns { display: flex; gap: 5px; }
-        .edit-btn { background: #ff9800; width: auto; padding: 6px 12px; font-size: 12px; }
-        .del-btn { background: #f44336; width: auto; padding: 6px 12px; font-size: 12px; }
+        .admin-box { max-width: 500px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        input, select, button { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { background: #01875f; color: white; border: none; font-weight: bold; cursor: pointer; }
+        .item-card { background: #fff; border: 1px solid #eee; padding: 10px; margin-bottom: 8px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .edit-btn { background: #ff9800; width: auto; padding: 5px 10px; font-size: 12px; margin-right: 5px; }
+        .del-btn { background: #f44336; width: auto; padding: 5px 10px; font-size: 12px; }
     </style>
 </head>
 <body>
-
 <div class="admin-box">
-    <h2>Admin Dashboard</h2>
-    <div id="form">
-        <input type="hidden" id="editIdx">
-        <input type="text" id="title" placeholder="অ্যাপ বা ফাইলের নাম">
-        <input type="text" id="link" placeholder="ডাউনলোড লিঙ্ক">
-        <select id="cat">
-            <option value="app">অ্যাপ (App)</option>
-            <option value="file">ফাইল (File)</option>
-        </select>
-        <button id="mainBtn" onclick="handleAction()">সেভ করুন</button>
-        <button id="cancelBtn" style="display:none; background:#888" onclick="resetForm()">বাতিল</button>
-    </div>
-
-    <div class="item-list" id="list">লোড হচ্ছে...</div>
+    <h2>Admin Panel</h2>
+    <input type="hidden" id="editIdx" value="-1">
+    <input type="text" id="title" placeholder="টাইটেল">
+    <input type="text" id="link" placeholder="লিঙ্ক">
+    <select id="cat">
+        <option value="app">App</option>
+        <option value="file">File</option>
+    </select>
+    <button id="mainBtn" onclick="save()">সেভ করুন</button>
+    <div id="list">লোড হচ্ছে...</div>
 </div>
 
 <script>
     const TOKEN = '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';
     const URL = 'https://api.github.com/repos/guui68/Downloading-apps/contents/data.json';
-    let items = [];
-    let sha = '';
-    let isEditing = false;
+    let items = [], sha = '';
 
     async function load() {
-        const res = await fetch(URL, { headers: { 'Authorization': `token ${TOKEN}` } });
+        const res = await fetch(URL, { headers: { 'Authorization': `token ${TOKEN}` }, cache: "no-store" });
         const data = await res.json();
         sha = data.sha;
-        items = JSON.parse(atob(data.content));
+        items = JSON.parse(decodeURIComponent(escape(atob(data.content))));
         render();
     }
 
     function render() {
         const listDiv = document.getElementById('list');
-        listDiv.innerHTML = '<h4>আইটেম লিস্ট:</h4>';
+        listDiv.innerHTML = '<h4>লিস্ট:</h4>';
         items.forEach((it, idx) => {
             listDiv.innerHTML += `
                 <div class="item-card">
-                    <div class="item-info"><b>${it.title}</b><span>${it.cat}</span></div>
-                    <div class="btns">
-                        <button class="edit-btn" onclick="startEdit(${idx})">এডিট</button>
-                        <button class="del-btn" onclick="deleteItem(${idx})">ডিলিট</button>
+                    <div><b>${it.title}</b></div>
+                    <div>
+                        <button class="edit-btn" onclick="edit(${idx})">Edit</button>
+                        <button class="del-btn" onclick="del(${idx})">Del</button>
                     </div>
                 </div>`;
         });
     }
 
-    async function handleAction() {
+    async function save() {
         const title = document.getElementById('title').value;
         const link = document.getElementById('link').value;
         const cat = document.getElementById('cat').value;
+        const idx = parseInt(document.getElementById('editIdx').value);
+
         if(!title || !link) return alert("তথ্য দিন!");
 
-        if(isEditing) {
-            const idx = document.getElementById('editIdx').value;
-            items[idx] = { ...items[idx], title, link, cat };
-        } else {
+        if(idx === -1) {
             items.push({ title, link, cat, color: '#'+Math.floor(Math.random()*16777215).toString(16) });
+        } else {
+            items[idx] = { ...items[idx], title, link, cat };
         }
-        await updateGithub();
+        update();
     }
 
-    function startEdit(idx) {
-        isEditing = true;
-        const item = items[idx];
-        document.getElementById('title').value = item.title;
-        document.getElementById('link').value = item.link;
-        document.getElementById('cat').value = item.cat;
+    function edit(idx) {
+        document.getElementById('title').value = items[idx].title;
+        document.getElementById('link').value = items[idx].link;
+        document.getElementById('cat').value = items[idx].cat;
         document.getElementById('editIdx').value = idx;
-        
         document.getElementById('mainBtn').innerText = "আপডেট করুন";
-        document.getElementById('mainBtn').classList.add('update-mode');
-        document.getElementById('cancelBtn').style.display = "block";
     }
 
-    async function deleteItem(idx) {
-        if(confirm("নিশ্চিত তো?")) {
+    async function del(idx) {
+        if(confirm("ডিলিট করবেন?")) {
             items.splice(idx, 1);
-            await updateGithub();
+            update();
         }
     }
 
-    async function updateGithub() {
+    async function update() {
         const res = await fetch(URL, {
             method: 'PUT',
             headers: { 'Authorization': `token ${TOKEN}`, 'Content-Type': 'application/json' },
@@ -117,8 +98,6 @@
         });
         if(res.ok) { alert("সফল হয়েছে!"); location.reload(); }
     }
-
-    function resetForm() { location.reload(); }
     load();
 </script>
 </body>
