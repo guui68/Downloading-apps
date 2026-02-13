@@ -6,7 +6,7 @@
     <title>GX Tech Store</title>
     <style>
         :root { --primary: #01875f; --bg: #f8f9fa; --surface: #ffffff; }
-        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); margin: 0; padding: 0; user-select: none; }
         
         .header { background: var(--surface); padding: 10px 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
         .search-box { max-width: 600px; margin: 10px auto; background: #f1f3f4; border-radius: 25px; padding: 8px 20px; display: flex; align-items: center; }
@@ -18,19 +18,17 @@
 
         .app-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding: 20px; max-width: 1000px; margin: auto; }
         .app-card { background: var(--surface); border-radius: 18px; padding: 15px; text-align: center; border: 1px solid #eee; transition: 0.2s; }
-        .app-card:active { transform: scale(0.96); }
         .app-icon { width: 68px; height: 68px; border-radius: 16px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 26px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-transform: uppercase; }
         .app-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; height: 35px; overflow: hidden; }
         
-        .install-btn { background: var(--primary); color: white; border: none; padding: 10px 0; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .install-btn:disabled { background: #ccc; cursor: not-allowed; }
+        .install-btn { background: var(--primary); color: white; border: none; padding: 10px 0; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="header">
     <div class="search-box">
-        <input type="text" id="searchInput" onkeyup="filterApps()" placeholder="অ্যাপস সার্চ করুন...">
+        <input type="text" id="searchInput" onkeyup="filterApps()" placeholder="সার্চ করুন...">
     </div>
     <div class="nav-tabs">
         <button id="tab-app" class="tab active" onclick="switchTab('app')">অ্যাপস</button>
@@ -51,9 +49,7 @@
             const data = await res.json();
             items = JSON.parse(decodeURIComponent(escape(atob(data.content))));
             render();
-        } catch (e) {
-            document.getElementById('mainContainer').innerText = "ডেটা লোড করতে ব্যর্থ!";
-        }
+        } catch (e) { document.getElementById('mainContainer').innerText = "ডেটা লোড ব্যর্থ!"; }
     }
 
     function render() {
@@ -66,31 +62,28 @@
                 <div class="app-card">
                     <div class="app-icon" style="background: ${item.color || '#01875f'}">${item.title[0]}</div>
                     <div class="app-title">${item.title}</div>
-                    <button class="install-btn" onclick="forceDownload('${item.link}', this)">ইনস্টল</button>
+                    <button class="install-btn" onclick="downloadFix('${item.link}')">ইনস্টল</button>
                 </div>`;
         });
     }
 
-    // মাস্টার ডাউনলোড ফাংশন (রিফ্রেশ ছাড়া বারবার ডাউনলোড হবে)
-    function forceDownload(url, btn) {
-        btn.innerText = "ডাউনলোড...";
-        btn.disabled = true;
-
-        // লিঙ্কের শেষে টাইমস্ট্যাম্প যোগ করা যাতে ব্রাউজার মনে করে এটি একদম নতুন ফাইল
-        const uniqueUrl = url + (url.includes('?') ? '&' : '?') + 'update=' + Date.now();
+    // ডাউনলোড সমস্যার মাস্টার সমাধান
+    function downloadFix(url) {
+        // ১. ক্যাশ মেমোরি কাটাতে ডাইনামিক লিঙ্ক তৈরি
+        const freshUrl = url + (url.includes('?') ? '&' : '?') + 'r=' + Math.random().toString(36).substring(7);
         
-        const a = document.createElement('a');
-        a.href = uniqueUrl;
-        a.setAttribute('download', ''); // ফোর্স ডাউনলোড
-        document.body.appendChild(a);
-        a.click();
+        // ২. সরাসরি লিঙ্ক ওপেন করার বদলে ইনভিজিবল ফ্রেম ব্যবহার
+        const link = document.createElement('a');
+        link.href = freshUrl;
+        link.target = '_blank'; // এটি ব্রাউজারকে নতুন প্রসেস শুরু করতে বাধ্য করে
+        link.download = ''; 
+        document.body.appendChild(link);
+        link.click();
         
-        // ৩ সেকেন্ড পর বাটন আগের অবস্থায় ফিরিয়ে আনা যাতে আবার ক্লিক করা যায়
+        // ৩. সাথে সাথে এলিমেন্ট রিমুভ করে মেমোরি ফ্রি করা
         setTimeout(() => {
-            document.body.removeChild(a);
-            btn.innerText = "ইনস্টল";
-            btn.disabled = false;
-        }, 3000);
+            document.body.removeChild(link);
+        }, 200);
     }
 
     function filterApps() {
