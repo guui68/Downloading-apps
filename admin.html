@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <title>GX Admin Panel</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
+        .box { background: white; max-width: 500px; margin: auto; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        input, select, button { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        button { background: #01875f; color: white; font-weight: bold; cursor: pointer; border: none; }
+        .item { display: flex; justify-content: space-between; background: #eee; padding: 10px; margin: 5px 0; border-radius: 5px; }
+        .del { background: #ff4444; width: auto; padding: 5px 10px; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>GX Tech Admin</h2>
+    <input type="text" id="title" placeholder="অ্যাপের নাম">
+    <input type="text" id="link" placeholder="ডাউনলোড লিংক">
+    <select id="cat">
+        <option value="app">অ্যাপ</option>
+        <option value="file">ফাইল</option>
+    </select>
+    <button onclick="saveData()">সেভ করুন</button>
+    <div id="list">লোডিং লিস্ট...</div>
+</div>
+
+<script>
+    const TOKEN = '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';
+    const REPO_URL = 'https://api.github.com/repos/guui68/Downloading-apps/contents/data.json';
+    let items = [];
+    let sha = '';
+
+    async function loadData() {
+        const res = await fetch(REPO_URL, { headers: { 'Authorization': `token ${TOKEN}` } });
+        const data = await res.json();
+        sha = data.sha;
+        items = JSON.parse(atob(data.content));
+        render();
+    }
+
+    function render() {
+        const list = document.getElementById('list');
+        list.innerHTML = '<h3>বর্তমান আইটেমসমূহ:</h3>';
+        items.forEach((it, idx) => {
+            list.innerHTML += `<div class="item"><span>${it.title} (${it.cat})</span> <button class="del" onclick="deleteItem(${idx})">ডিলিট</button></div>`;
+        });
+    }
+
+    async function saveData() {
+        const title = document.getElementById('title').value;
+        const link = document.getElementById('link').value;
+        const cat = document.getElementById('cat').value;
+        if(!title || !link) return alert("সব ঘর পূরণ করুন!");
+
+        items.push({ title, link, cat, color: '#'+Math.floor(Math.random()*16777215).toString(16) });
+        await updateGithub();
+    }
+
+    async function deleteItem(idx) {
+        if(confirm("ডিলিট করবেন?")) {
+            items.splice(idx, 1);
+            await updateGithub();
+        }
+    }
+
+    async function updateGithub() {
+        const res = await fetch(REPO_URL, {
+            method: 'PUT',
+            headers: { 'Authorization': `token ${TOKEN}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                message: "Update Store",
+                content: btoa(JSON.stringify(items, null, 2)),
+                sha: sha
+            })
+        });
+        if(res.ok) { alert("আপডেট হয়েছে!"); location.reload(); }
+    }
+    loadData();
+</script>
+</body>
+</html>
