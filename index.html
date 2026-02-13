@@ -5,23 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GX Tech Store</title>
     <style>
-        :root { --primary: #01875f; --bg: #f8f9fa; --surface: #ffffff; }
+        :root { --primary: #01875f; --bg: #f1f3f4; --surface: #ffffff; }
         body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); margin: 0; padding: 0; user-select: none; }
         
-        .header { background: var(--surface); padding: 10px 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
-        .search-box { max-width: 600px; margin: 10px auto; background: #f1f3f4; border-radius: 25px; padding: 8px 20px; display: flex; align-items: center; }
+        /* হেডার ও সার্চ বার */
+        .header { background: var(--surface); padding: 10px 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .search-box { max-width: 600px; margin: 10px auto; background: #f1f3f4; border-radius: 25px; padding: 8px 20px; display: flex; align-items: center; border: 1px solid transparent; }
         .search-box input { width: 100%; border: none; background: transparent; padding: 8px; font-size: 16px; outline: none; }
         
         .nav-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 5px; }
         .tab { padding: 8px 25px; border-radius: 20px; border: none; font-weight: 600; cursor: pointer; background: #e8f0fe; color: #1967d2; font-size: 14px; }
         .tab.active { background: var(--primary); color: white; }
 
-        .app-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding: 20px; max-width: 1000px; margin: auto; }
-        .app-card { background: var(--surface); border-radius: 18px; padding: 15px; text-align: center; border: 1px solid #eee; transition: 0.2s; }
-        .app-icon { width: 68px; height: 68px; border-radius: 16px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 26px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-transform: uppercase; }
-        .app-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; height: 35px; overflow: hidden; }
+        /* অ্যাপ গ্রিড ও কার্ড ডিজাইন */
+        .app-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 20px; padding: 20px; max-width: 1000px; margin: auto; }
         
-        .install-btn { background: var(--primary); color: white; border: none; padding: 10px 0; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold; }
+        .app-card { 
+            background: var(--surface); 
+            border-radius: 20px; 
+            padding: 20px 15px; 
+            text-align: center; 
+            /* চারপাশ দিয়ে সুন্দর শেডো */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #f0f0f0;
+        }
+        .app-card:active { transform: scale(0.95); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+        /* নামের প্রথম অক্ষরের লোগো */
+        .app-icon { 
+            width: 70px; 
+            height: 70px; 
+            border-radius: 18px; 
+            margin: 0 auto 15px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: white; 
+            font-size: 30px; 
+            font-weight: bold; 
+            text-transform: uppercase;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .app-title { font-size: 14px; font-weight: 600; margin-bottom: 15px; color: #202124; height: 35px; overflow: hidden; }
+        
+        .install-btn { 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            padding: 10px 0; 
+            border-radius: 10px; 
+            width: 100%; 
+            cursor: pointer; 
+            font-weight: bold; 
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
@@ -47,6 +86,7 @@
         try {
             const res = await fetch(API_URL, { cache: "no-store" });
             const data = await res.json();
+            // ডাটা ডিকোড করা
             items = JSON.parse(decodeURIComponent(escape(atob(data.content))));
             render();
         } catch (e) { document.getElementById('mainContainer').innerText = "ডেটা লোড ব্যর্থ!"; }
@@ -58,32 +98,29 @@
         const filtered = items.filter(i => i.cat === currentTab);
         
         filtered.forEach(item => {
+            // নামের প্রথম অক্ষর বের করা
+            const firstLetter = item.title ? item.title.charAt(0) : '?';
+            
             container.innerHTML += `
                 <div class="app-card">
-                    <div class="app-icon" style="background: ${item.color || '#01875f'}">${item.title[0]}</div>
+                    <div class="app-icon" style="background: ${item.color || '#01875f'}">
+                        ${firstLetter}
+                    </div>
                     <div class="app-title">${item.title}</div>
                     <button class="install-btn" onclick="downloadFix('${item.link}')">ইনস্টল</button>
                 </div>`;
         });
     }
 
-    // ডাউনলোড সমস্যার মাস্টার সমাধান
     function downloadFix(url) {
-        // ১. ক্যাশ মেমোরি কাটাতে ডাইনামিক লিঙ্ক তৈরি
         const freshUrl = url + (url.includes('?') ? '&' : '?') + 'r=' + Math.random().toString(36).substring(7);
-        
-        // ২. সরাসরি লিঙ্ক ওপেন করার বদলে ইনভিজিবল ফ্রেম ব্যবহার
         const link = document.createElement('a');
         link.href = freshUrl;
-        link.target = '_blank'; // এটি ব্রাউজারকে নতুন প্রসেস শুরু করতে বাধ্য করে
+        link.target = '_blank';
         link.download = ''; 
         document.body.appendChild(link);
         link.click();
-        
-        // ৩. সাথে সাথে এলিমেন্ট রিমুভ করে মেমোরি ফ্রি করা
-        setTimeout(() => {
-            document.body.removeChild(link);
-        }, 200);
+        setTimeout(() => { document.body.removeChild(link); }, 200);
     }
 
     function filterApps() {
