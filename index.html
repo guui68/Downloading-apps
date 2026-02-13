@@ -5,110 +5,214 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GX Tech Store</title>
     <style>
-        :root { --primary: #01875f; --bg: #f8f9fa; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 0; }
+        :root { --primary: #01875f; --bg: #f8f9fa; --surface: #ffffff; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); margin: 0; padding: 0; user-select: none; }
         
-        /* প্রিমিয়াম হেডার ও সার্চ বক্স */
-        .header { background: #fff; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 1000; }
-        .search-box { max-width: 500px; margin: 0 auto 15px; background: #f1f3f4; border-radius: 30px; padding: 10px 20px; display: flex; border: 1px solid #ddd; }
-        .search-box input { width: 100%; border: none; background: transparent; outline: none; font-size: 16px; }
+        /* প্রিমিয়াম হেডার */
+        .header { 
+            background: var(--surface); 
+            padding: 15px 20px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03); 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+            border-bottom: 1px solid #f0f0f0;
+        }
 
-        /* ট্যাব বাটন */
-        .nav-tabs { display: flex; justify-content: center; gap: 10px; }
-        .tab { padding: 10px 30px; border-radius: 25px; border: 1px solid #ddd; cursor: pointer; background: #fff; font-weight: bold; transition: 0.3s; }
-        .tab.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 10px rgba(1,135,95,0.3); }
+        /* প্রিমিয়াম সার্চ বক্স */
+        .search-box { 
+            max-width: 550px; 
+            margin: 0 auto 20px; 
+            background: #ffffff; 
+            border-radius: 28px; 
+            padding: 8px 22px; 
+            display: flex; 
+            align-items: center; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06); 
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        .search-box:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(1, 135, 95, 0.15);
+        }
+        .search-box input { 
+            width: 100%; 
+            border: none; 
+            background: transparent; 
+            font-size: 16px; 
+            outline: none; 
+            color: #3c4043;
+            padding: 8px 0;
+        }
+
+        /* প্রিমিয়াম নেভিগেশন ট্যাব */
+        .nav-tabs { 
+            display: flex; 
+            justify-content: center; 
+            gap: 15px; 
+        }
+        .tab { 
+            padding: 10px 35px; 
+            border-radius: 25px; 
+            border: 1px solid #e0e0e0;
+            font-weight: 600; 
+            cursor: pointer; 
+            background: #ffffff; 
+            color: #5f6368; 
+            font-size: 14px; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .tab:hover {
+            background: #f1f3f4;
+        }
+        .tab.active { 
+            background: var(--primary); 
+            color: #ffffff; 
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(1, 135, 95, 0.3);
+            transform: translateY(-1px);
+        }
 
         /* অ্যাপ গ্রিড */
-        .app-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; padding: 20px; max-width: 1100px; margin: auto; }
+        .app-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+            gap: 25px; 
+            padding: 25px; 
+            max-width: 1100px; 
+            margin: auto; 
+        }
         
-        /* অ্যাপ কার্ড ও কড়া শেডো */
+        /* প্রিমিয়াম কার্ড শেডো */
         .app-card { 
-            background: #fff; border-radius: 22px; padding: 20px; text-align: center; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15); /* কড়া শেডো */
-            border: 1px solid rgba(0,0,0,0.05); transition: 0.3s;
+            background: var(--surface); 
+            border-radius: 24px; 
+            padding: 22px 18px; 
+            text-align: center; 
+            box-shadow: 0 8px 24px rgba(149, 157, 165, 0.1); 
+            border: 1px solid rgba(0,0,0,0.03);
+            transition: all 0.3s ease;
+        }
+        .app-card:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 12px 35px rgba(0,0,0,0.1); 
         }
 
-        /* লোগো অক্ষর */
+        /* আইকন ডিজাইন */
         .app-icon { 
-            width: 70px; height: 70px; border-radius: 18px; margin: 0 auto 15px; 
-            display: flex; align-items: center; justify-content: center; 
-            color: #fff; font-size: 32px; font-weight: bold; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-transform: uppercase;
+            width: 80px; 
+            height: 80px; 
+            border-radius: 22px; 
+            margin: 0 auto 18px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: white; 
+            font-size: 34px; 
+            font-weight: bold; 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.12);
         }
         
-        .app-title { font-size: 15px; font-weight: bold; margin-bottom: 15px; display: block; height: 36px; overflow: hidden; }
-        .install-btn { background: var(--primary); color: #fff; border: none; padding: 10px; border-radius: 12px; width: 100%; cursor: pointer; font-weight: bold; }
+        .app-title { 
+            font-size: 15px; 
+            font-weight: 600; 
+            color: #202124; 
+            margin-bottom: 18px; 
+            height: 40px; 
+            overflow: hidden; 
+            line-height: 1.3;
+        }
+        
+        .install-btn { 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            padding: 12px 0; 
+            border-radius: 14px; 
+            width: 100%; 
+            cursor: pointer; 
+            font-weight: 700; 
+            font-size: 14px;
+            box-shadow: 0 2px 6px rgba(1, 135, 95, 0.2);
+            transition: 0.2s;
+        }
+        .install-btn:active { transform: scale(0.94); background: #016d4d; }
     </style>
 </head>
 <body>
 
 <div class="header">
     <div class="search-box">
-        <input type="text" id="searchInput" onkeyup="filter()" placeholder="খুঁজুন...">
+        <input type="text" id="searchInput" onkeyup="filterApps()" placeholder="অ্যাপ বা ফাইল খুঁজুন...">
     </div>
     <div class="nav-tabs">
-        <button id="btn-app" class="tab active" onclick="tab('app')">Apps</button>
-        <button id="btn-file" class="tab" onclick="tab('file')">Files</button>
+        <button id="tab-app" class="tab active" onclick="switchTab('app')">অ্যাপস</button>
+        <button id="tab-file" class="tab" onclick="switchTab('file')">ফাইল</button>
     </div>
 </div>
 
-<div class="app-grid" id="list">লোডিং...</div>
+<div class="app-grid" id="mainContainer">লোডিং হচ্ছে...</div>
 
 <script>
-    let allData = [];
-    let current = 'app';
+    let items = [];
+    let currentTab = 'app';
+    const API_URL = 'https://api.github.com/repos/guui68/Downloading-apps/contents/data.json';
 
-    // ডাটা লোড করার সহজ নিয়ম
-    async function load() {
+    async function fetchData() {
         try {
-            const r = await fetch('https://api.github.com/repos/guui68/Downloading-apps/contents/data.json?v=' + Date.now());
-            const d = await r.json();
-            // ডাটা ডিকোডিং ফিক্স
-            const content = decodeURIComponent(escape(atob(d.content)));
-            allData = JSON.parse(content);
-            show();
-        } catch (e) {
-            document.getElementById('list').innerHTML = "ডাটা পাওয়া যাচ্ছে না। অ্যাডমিন থেকে অ্যাপ অ্যাড করুন।";
-        }
+            const res = await fetch(API_URL + '?v=' + Date.now(), { cache: "no-store" });
+            const data = await res.json();
+            items = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+            render();
+        } catch (e) { document.getElementById('mainContainer').innerText = "নেটওয়ার্ক সমস্যা!"; }
     }
 
-    function show() {
-        const container = document.getElementById('list');
+    function render() {
+        const container = document.getElementById('mainContainer');
         container.innerHTML = '';
-        const filtered = allData.filter(i => i.cat === current);
+        const filtered = items.filter(i => i.cat === currentTab);
         
-        if(filtered.length === 0) {
-            container.innerHTML = "<p style='grid-column: 1/-1; text-align:center;'>এই ক্যাটাগরিতে কিছু নেই।</p>";
-            return;
-        }
-
         filtered.forEach(item => {
-            const name = item.title || item.name || "App";
-            const letter = name.charAt(0).toUpperCase();
+            const firstLetter = item.title ? item.title.trim().charAt(0).toUpperCase() : '?';
             container.innerHTML += `
                 <div class="app-card">
-                    <div class="app-icon" style="background:${item.color || '#01875f'}">${letter}</div>
-                    <div class="app-title">${name}</div>
-                    <button class="install-btn" onclick="window.open('${item.link}', '_blank')">Install</button>
+                    <div class="app-icon" style="background: ${item.color || '#01875f'}">
+                        ${firstLetter}
+                    </div>
+                    <div class="app-title">${item.title}</div>
+                    <button class="install-btn" onclick="downloadFix('${item.link}')">ইনস্টল</button>
                 </div>`;
         });
     }
 
-    function tab(type) {
-        current = type;
-        document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-        document.getElementById('btn-' + type).classList.add('active');
-        show();
+    function downloadFix(url) {
+        const freshUrl = url + (url.includes('?') ? '&' : '?') + 'r=' + Math.random().toString(36).substring(7);
+        const link = document.createElement('a');
+        link.href = freshUrl;
+        link.target = '_blank';
+        document.body.appendChild(link);
+        link.click();
+        setTimeout(() => { document.body.removeChild(link); }, 200);
     }
 
-    function filter() {
+    function filterApps() {
         let q = document.getElementById('searchInput').value.toLowerCase();
-        document.querySelectorAll('.app-card').forEach(c => {
-            c.style.display = c.innerText.toLowerCase().includes(q) ? 'block' : 'none';
+        document.querySelectorAll('.app-card').forEach(card => {
+            let title = card.querySelector('.app-title').innerText.toLowerCase();
+            card.style.display = title.includes(q) ? 'block' : 'none';
         });
     }
 
-    load();
+    function switchTab(cat) {
+        currentTab = cat;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('tab-' + cat).classList.add('active');
+        render();
+    }
+
+    fetchData();
 </script>
 </body>
 </html>
