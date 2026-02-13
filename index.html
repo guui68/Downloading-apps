@@ -6,27 +6,33 @@
     <title>GX Tech Play Store</title>
     <style>
         body { font-family: 'Roboto', sans-serif; background-color: #f1f3f4; margin: 0; padding: 0; }
-        .header { background-color: #fff; padding: 15px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-        .header h1 { color: #5f6368; margin: 0; font-size: 22px; }
         
-        .container { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; padding: 20px; max-width: 1000px; margin: auto; }
+        /* সার্চ বার এরিয়া */
+        .header { background-color: #fff; padding: 10px 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        .search-container { max-width: 600px; margin: 0 auto; position: relative; }
+        .search-container input { width: 100%; padding: 12px 45px; border-radius: 8px; border: 1px solid #dfe1e5; background-color: #f1f3f4; font-size: 16px; outline: none; box-sizing: border-box; }
+        .search-container input:focus { background-color: #fff; box-shadow: 0 1px 6px rgba(32,33,36,0.28); border-color: transparent; }
+
+        .container { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; padding: 20px; max-width: 1000px; margin: auto; }
         
-        .app-card { background: white; border-radius: 12px; padding: 15px; text-align: center; transition: 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.12); cursor: pointer; text-decoration: none; color: inherit; }
-        .app-card:hover { box-shadow: 0 8px 16px rgba(0,0,0,0.1); transform: translateY(-5px); }
+        .app-card { background: white; border-radius: 12px; padding: 15px; text-align: center; transition: 0.3s; box-shadow: 0 1px 3px rgba(0,0,0,0.12); cursor: pointer; text-decoration: none; color: inherit; display: block; }
+        .app-card:hover { box-shadow: 0 8px 16px rgba(0,0,0,0.1); transform: translateY(-3px); }
         
-        .app-icon { width: 80px; height: 80px; background: #00a173; border-radius: 18px; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 30px; font-weight: bold; }
-        .app-name { font-size: 14px; font-weight: 600; color: #202124; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .app-dev { font-size: 12px; color: #5f6368; margin-bottom: 10px; }
-        .download-btn { background-color: #01875f; color: white; border: none; padding: 8px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; width: 100%; cursor: pointer; }
+        .app-icon { width: 72px; height: 72px; border-radius: 18px; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 28px; font-weight: bold; }
+        .app-name { font-size: 14px; font-weight: 500; color: #202124; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .app-dev { font-size: 12px; color: #5f6368; margin-bottom: 12px; }
+        .download-btn { background-color: #01875f; color: white; border: none; padding: 8px 0; border-radius: 8px; font-size: 13px; font-weight: bold; width: 100%; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>GX Tech Play Store</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" onkeyup="searchApps()" placeholder="অ্যাপস সার্চ করুন...">
+        </div>
     </div>
 
-    <div class="container">
+    <div class="container" id="appContainer">
         
         <a href="https://github.com/guui68/Downloading-apps/releases/download/v1.0/_GX_technology_19536335.1.apk" class="app-card">
             <div class="app-icon" style="background: #2196F3;">GX</div>
@@ -35,21 +41,31 @@
             <button class="download-btn">Install</button>
         </a>
 
-        <a href="আপনার_২য়_অ্যাপের_ডাউনলোড_লিংক_এখানে" class="app-card">
-            <div class="app-icon" style="background: #FF5722;">AT</div>
-            <div class="app-name">App Two</div>
-            <div class="app-dev">GX Tech Inc.</div>
-            <button class="download-btn">Install</button>
-        </a>
-
-        <a href="আপনার_৩য়_অ্যাপের_ডাউনলোড_লিংক_এখানে" class="app-card">
-            <div class="app-icon" style="background: #9C27B0;">NT</div>
-            <div class="app-name">New App</div>
+        <a href="https://github.com/guui68/Downloading-apps/releases/download/v1.1/_Prayer__Time_19519243.apk" class="app-card">
+            <div class="app-icon" style="background: #4CAF50;">PT</div>
+            <div class="app-name">Prayer Time</div>
             <div class="app-dev">GX Tech Inc.</div>
             <button class="download-btn">Install</button>
         </a>
 
     </div>
+
+    <script>
+        // সার্চ ফাংশন
+        function searchApps() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let cards = document.getElementsByClassName('app-card');
+            
+            for (let i = 0; i < cards.length; i++) {
+                let name = cards[i].getElementsByClassName('app-name')[0].innerText.toLowerCase();
+                if (name.includes(input)) {
+                    cards[i].style.display = "";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+    </script>
 
 </body>
 </html>
